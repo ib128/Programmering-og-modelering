@@ -1,16 +1,24 @@
-#PLAN: Person som prøver å unngå å bli truffet av bomber/kniver/ett eller annet
+#PLAN: Person som prøver å unngå å bli truffet av fireballs eller annet
 # Jo lengre du holder ut jo mer poeng tjener du + økende vanskelighet
-# mulige "upgrades"
+# mulige "upgrades"?
 
 import pygame
 
 #initiering av programmet
 pygame.init()
-overflate = pygame.display.set_mode((248, 208))
+overflate = pygame.display.set_mode((576, 324))
 pygame.display.set_caption("Spill test")
 
-bg = pygame.image.load("Rom1.png")
-overflate.blit(bg, (0, 0))
+bg1 = pygame.image.load("BG/Clouds1/1.png")
+bg2 = pygame.image.load("BG/Clouds1/2.png")
+bg3 = pygame.image.load("BG/Clouds1/3.png")
+bg4 = pygame.image.load("BG/Clouds1/4.png")
+
+overflate.blit(bg1, (0, 0))
+overflate.blit(bg2, (0, 0))
+overflate.blit(bg3, (0, 0))
+overflate.blit(bg4, (0, 0))
+
 pygame.display.update()
 
 
@@ -20,4 +28,4 @@ while True: #Så lenge denne er sann, og det er den
         if e.type == pygame.QUIT: #sjekker om en hendelse var avslutt
             pygame.quit() # dersom det var det, avsluttes programmet
     pygame.display.update()
-            
+
