@@ -5,8 +5,8 @@
 import pygame
 
 # Vindustørrelse
-vindux = 640 #576
-vinduy = 480 #324
+vindux = 800 #576
+vinduy = 600 #324
 
 # Initiering av pygame
 pygame.init()
@@ -29,6 +29,7 @@ t_bg4 = pygame.transform.scale(bg4, (vindux, vinduy))
 class player:
     def __init__(self, x, y):
         self.spiller = pygame.image.load("Slime_idle.png").convert_alpha()
+        self.spiller = pygame.transform.scale(self.spiller, (50, 50))
         self.spillerx= x
         self.spillery = y
         self.dx = 10
