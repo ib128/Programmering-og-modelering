@@ -38,34 +38,30 @@ class player:
     def tegn(self):
         overflate.blit(self.spiller, (self.spillerx, self.spillery))
 
+    def beveg(self, keys):
+        if keys[pygame.K_RIGHT]:
+            self.spillerx += self.dx
+        if keys[pygame.K_LEFT]:
+            self.spillerx -= self.dx
+        if keys[pygame.K_UP]:
+            self.spillery -= self.dy
+        if keys[pygame.K_DOWN]:
+            self.spillery += self.dy
+            
         
-    def right(self):
-        self.spillerx += self.dx
-    def left(self):
-        self.spillerx -= self.dx
-    def up(self):
-        self.spillery -= self.dy
-    def down(self):
-        self.spillery += self.dy
-        
-# Lageer spillerobjekt
+# Lager spillerobjekt
 spiller = player(300, 300)
 
 # Spill løkke
 run = True
 while run:
+    #Avslutter spillet
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             run = False
-        if e.type == pygame.KEYDOWN:
-            if e.key == pygame.K_RIGHT:
-                spiller.right()
-            if e.key == pygame.K_LEFT:
-                spiller.left()
-            if e.key == pygame.K_UP:
-                spiller.up()
-            if e.key == pygame.K_DOWN:
-                spiller.down()
+            
+    keys = pygame.key.get_pressed()
+    spiller.beveg(keys)
                 
     # Fjerner bakgrunnen        
     overflate.fill((0, 0, 0))
