@@ -53,19 +53,36 @@ class player:
         self.dx = 7
         self.dy = 7
         
+        # Dødsanimasjonsvariabler
+        sprite_sheet = pygame.image.load("Slime1_Death_body.png").convert_alpha()
+        self.death_frames = self.hent_rammer(sprite_sheet, 10, 64, 64)
+        self.current_frame = 0
+        self.is_dead = False
+        self.animation_done = False
+        self.animation_speed = 100
+        self.last_frame_time = 0
+        
+    def hent_rammer(self, sprite_sheet, antall_rammer, rammebredde, rammehøyde):
+        rammer = []
+        for i in range(antall_rammer):
+            frame = sprite_sheet.subsurface((i*rammebredde, 0, rammebredde, rammehøyde))
+            rammer.append(frame)
+        return rammer
+        
     # Flytter spilleren basert på tastatur klikk
     def beveg(self, keys):
-        if keys[pygame.K_RIGHT]:
-            self.rect.x += self.dx
-        if keys[pygame.K_LEFT]:
-            self.rect.x -= self.dx
-        if keys[pygame.K_UP]:
-            self.rect.y -= self.dy
-        if keys[pygame.K_DOWN]:
-            self.rect.y += self.dy
+        if not self.is_dead:
+            if keys[pygame.K_RIGHT]:
+                self.rect.x += self.dx
+            if keys[pygame.K_LEFT]:
+                self.rect.x -= self.dx
+            if keys[pygame.K_UP]:
+                self.rect.y -= self.dy
+            if keys[pygame.K_DOWN]:
+                self.rect.y += self.dy
             
-        #Oppdaterer kollisjonsbpoksen etter bevegelse
-        self.kollisjon_rect.topleft = (self.rect.x + 10, self.rect.y + 15)
+            #Oppdaterer kollisjonsbpoksen etter bevegelse
+            self.kollisjon_rect.topleft = (self.rect.x + 10, self.rect.y + 15)
            
     def check_bounds(self, width, height):
         if self.rect.left < 0:
@@ -79,6 +96,34 @@ class player:
         
     def tegn(self):
         overflate.blit(self.bilde, (self.rect.x, self.rect.y))
+    
+    def play_death_animation(self, ildkuler, bakgrunner):
+        # Spiller dødsanimasjonen en gang
+        if not self.animation_done:
+            now = pygame.time.get_ticks()
+            if now - self.last_frame_time > self.animation_speed:
+                self.last_frame_time = now
+                
+                for bg in bakgrunner:
+                    overflate.blit(bg,(0,0))
+                    
+                for ildkule in ildkuler:
+                    ildkule.tegn(overflate)
+                
+                if self.current_frame < len(self.death_frames):
+                    overflate.blit(self.death_frames[self.current_frame], (self.rect.x, self.rect.y))
+                    self.current_frame += 1
+                else:
+                    self.animation_done = True
+        else:
+            # Tegner siste frame som stillebilde etter animasjonen er ferdig
+            for bg in bakgrunner:
+                    overflate.blit(bg,(0,0))
+                    
+            for ildkule in ildkuler:
+                    ildkule.tegn(overflate)
+                    
+            overflate.blit(self.death_frames[-1], (self.rect.x, self.rect.y))
 
 # Definerer fiendeklassen (ildkuler)
 class ild:
@@ -215,6 +260,7 @@ while run:
             ildkule.check_bounds(vindux, vinduy)
             # Kollisjonsjekk mellom spiller og ildkuler
             if spiller.kollisjon_rect.colliderect(ildkule.kollisjon_rect):
+                spiller.is_dead = True
                 alive = False
         
         # Legger til nye ildkuler etter en viss tid
@@ -247,24 +293,27 @@ while run:
         
         # Opptaterer skjermen
         pygame.display.update()
-        
         # Setter FPS (frames per second)
         clock.tick(60)
         
     else:
-        # Spilleren er død: Tegn "Game Over"-skjerm eller vent på en knapp for restart
-        overflate.fill((0, 0, 0))
-        font = pygame.font.Font(None, 74)
-        tekst = font.render("Game Over", True, (255, 0, 0))
-        overflate.blit(tekst, (vindux // 2 - tekst.get_width() // 2, vinduy // 2 - tekst.get_height() // 2))
-        pygame.display.update()
-
-        # Venter på spill-avslutning eller restart
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_r]:  # Restart med "R"
-            alive = True
-            ildkuler = [ild(vindux, vinduy, 60, 60, spiller) for _ in range(5)]
-            spiller = player(300, 300, 50, 50)
+        if not spiller.animation_done:
+            spiller.play_death_animation(ildkuler, [t_bg1, t_bg2, t_bg3, t_bg4])
+            pygame.display.update()
+        else:
+            # Spilleren er død, tegner "Game Over"-skjerm
+            overflate.fill((0, 0, 0))
+            font = pygame.font.Font(None, 74)
+            tekst = font.render("Game Over", True, (255, 0, 0))
+            overflate.blit(tekst, (vindux // 2 - tekst.get_width() // 2, vinduy // 2 - tekst.get_height() // 2))
+            pygame.display.update()
+            
+            # Venter på spill-avslutning eller restart
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_r]:  # Restart med "R"
+                alive = True
+                ildkuler = [ild(vindux, vinduy, 60, 60, spiller) for _ in range(5)]
+                spiller = player(300, 300, 50, 50)
 
 # Avslutter pygame
 pygame.quit()
