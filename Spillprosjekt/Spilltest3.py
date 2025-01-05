@@ -1,7 +1,3 @@
-#PLAN: Person som prøver å unngå å bli truffet av fireballs eller annet
-# Jo lengre du holder ut jo mer poeng tjener du + økende vanskelighet
-# mulige "upgrades"?
-
 import pygame
 import random
 
@@ -34,11 +30,15 @@ bg2 = pygame.image.load("BG/Clouds1/2.png")
 bg3 = pygame.image.load("BG/Clouds1/3.png")
 bg4 = pygame.image.load("BG/Clouds1/4.png")
 
+#Game over bakgrunnsbilde
+gameover_bg = pygame.image.load("Gameover_bg.png")
+
 # Tilpasser bakrunnen til vinduet
 t_bg1 = pygame.transform.scale(bg1, (vindux, vinduy))
 t_bg2 = pygame.transform.scale(bg2, (vindux, vinduy))
 t_bg3 = pygame.transform.scale(bg3, (vindux, vinduy))
 t_bg4 = pygame.transform.scale(bg4, (vindux, vinduy))
+gameover_bg = pygame.transform.scale(gameover_bg, (vindux, vinduy))
 
 # Definerer spillerklassen
 class player:
@@ -303,9 +303,15 @@ while run:
         else:
             # Spilleren er død, tegner "Game Over"-skjerm
             overflate.fill((0, 0, 0))
-            font = pygame.font.Font(None, 74)
-            tekst = font.render("Game Over", True, (255, 0, 0))
-            overflate.blit(tekst, (vindux // 2 - tekst.get_width() // 2, vinduy // 2 - tekst.get_height() // 2))
+            overflate.blit(gameover_bg, (0, 0))
+            
+            font1 = pygame.font.Font("PressStart2P.ttf", 60)
+            font2 = pygame.font.Font("PressStart2P.ttf", 20)
+            
+            tekst1 = font1.render("Game Over", True, (255, 255, 255))
+            tekst2 = font2.render("Trykk 'R' for å prøve igjen", True, (255, 255, 255))
+            overflate.blit(tekst1, (vindux // 2 - tekst1.get_width() // 2, vinduy // 2 - tekst1.get_height() // 2))
+            overflate.blit(tekst2, (vindux // 2 - tekst2.get_width() // 2, (vinduy // 2 - tekst2.get_height() // 2) + 100))
             pygame.display.update()
             
             # Venter på spill-avslutning eller restart
