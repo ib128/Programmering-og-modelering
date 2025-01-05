@@ -40,6 +40,7 @@ t_bg3 = pygame.transform.scale(bg3, (vindux, vinduy))
 t_bg4 = pygame.transform.scale(bg4, (vindux, vinduy))
 gameover_bg = pygame.transform.scale(gameover_bg, (vindux, vinduy))
 
+
 # Definerer spillerklassen
 class player:
     def __init__(self, x, y, width, height):
@@ -118,10 +119,9 @@ class player:
         else:
             # Tegner siste frame som stillebilde etter animasjonen er ferdig
             for bg in bakgrunner:
-                    overflate.blit(bg,(0,0))
-                    
+                overflate.blit(bg,(0,0))       
             for ildkule in ildkuler:
-                    ildkule.tegn(overflate)
+                ildkule.tegn(overflate)
                     
             overflate.blit(self.death_frames[-1], (self.rect.x, self.rect.y))
 
@@ -205,7 +205,7 @@ class ild:
                 self.retning = DOWNRIGHT
             elif self.retning == UP:
                 self.retning = DOWN
-        if self.rect.bottom > vinduy + 100:
+        if self.rect.bottom > height + 100:
             # Ildkula har gått under bunnen
             if self.retning == DOWNLEFT:
                 self.retning = UPLEFT
@@ -221,7 +221,7 @@ class ild:
                 self.retning = UPRIGHT
             elif self.retning == LEFT:
                 self.retning = RIGHT
-        if self.rect.right > vindux + 100:
+        if self.rect.right > width + 100:
             # Ildkula har gått over høyresiden
             if self.retning == DOWNRIGHT:
                 self.retning = DOWNLEFT
@@ -246,13 +246,53 @@ sist_pluss = pygame.time.get_ticks()
 
 # Hovedspill løkke
 clock = pygame.time.Clock()
-alive = True
+# Setter FPS (frames per second)
+clock.tick(60)
+meny = True
+alive = False
 run = True
 while run:
-    #Avslutter spillet
+    if meny:
+        # Tegner bakgrunnene
+        overflate.blit(t_bg1, (0, 0))
+        overflate.blit(t_bg2, (0, 0))
+        overflate.blit(t_bg3, (0, 0))
+        overflate.blit(t_bg4, (0, 0))
+        
+        font1 = pygame.font.Font("PressStart2P.ttf", 60)
+        skygge1F = pygame.font.Font("PressStart2P.ttf", 60)
+        font2 = pygame.font.Font("PressStart2P.ttf", 20)
+        
+        tekst1 = font1.render("Fireball", True, (255, 255, 255))
+        skygge1 = skygge1F.render("Fireball", True, (255, 69, 0))
+        tekst2 = font2.render("Trykk 'R' for å starte spillet", True, (255, 255, 255))
+        
+        # Sentral plassering
+        tekst1_x = vindux // 2 - tekst1.get_width() // 2
+        tekst1_y = vinduy // 2 - tekst1.get_height() // 2
+        
+        offset = 3  # Skyggeforskyvning
+        
+        # Tegner skyggen på alle sider for å skape border
+        overflate.blit(skygge1, (tekst1_x - offset, tekst1_y))
+        overflate.blit(skygge1, (tekst1_x + offset, tekst1_y))
+        overflate.blit(skygge1, (tekst1_x, tekst1_y - offset))
+        overflate.blit(skygge1, (tekst1_x, tekst1_y + offset))
+        
+        # Tegner selve teksten i midten av skyggene
+        overflate.blit(tekst1, (tekst1_x, tekst1_y))
+        overflate.blit(tekst2, (vindux // 2 - tekst2.get_width() // 2, (vinduy // 2 - tekst2.get_height() // 2) + 100))
+        
+        pygame.display.update()
+        
+       #Avslutter spillet
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             run = False
+        if e.type == pygame.KEYDOWN and e.key == pygame.K_r:
+            alive = True
+            meny = False
+    
     if alive:
         # Oppdaterer ildkulene
         for ildkule in ildkuler:
@@ -293,10 +333,8 @@ while run:
         
         # Opptaterer skjermen
         pygame.display.update()
-        # Setter FPS (frames per second)
-        clock.tick(60)
         
-    else:
+    elif spiller.is_dead:
         if not spiller.animation_done:
             spiller.play_death_animation(ildkuler, [t_bg1, t_bg2, t_bg3, t_bg4])
             pygame.display.update()
@@ -323,4 +361,3 @@ while run:
 
 # Avslutter pygame
 pygame.quit()
-
