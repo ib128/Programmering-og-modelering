@@ -48,22 +48,10 @@ class player:
             self.rect.y += self.dy
             
 # Definerer fiendeklassen (ildkuler)          
-class ild:
-    def __init__(self, x, y, width, height):
-        self.bilde = pygame.image.load("Ild.png").convert_alpha()
-        self.bilde = pygame.transform.scale(self.bilde, (width, height))
-        self.rect = pygame.Rect(x, y, width, height)
-        self.dx = 5
-        self.dy = 5
-        
-    def tegn(self):
-        overflate.blit(self.bilde, (self.rect.x, self.rect.y))
             
         
 # Lager spillerobjekt
 spiller = player(300, 300, 50, 50)
-# Lager ildkuleobjekt
-ildkule = ild(200, 300, 50, 50)
 
 # Spill løkke
 clock = pygame.time.Clock()
@@ -88,9 +76,7 @@ while run:
     
     # Tegner spilleren
     spiller.tegn()
-    # Tegner ildkua
-    ildkule.tegn()
-    
+
     # Opptaterer skjermen
     pygame.display.update()
     

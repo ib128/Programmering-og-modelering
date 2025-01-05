@@ -73,7 +73,7 @@ class ild:
             
     def check_bounds(self, width, height):
         #Sjekker og korrigerer blokkens posisjon når den treffer kantene.
-        if self.rect.top < -50:
+        if self.rect.top < -100:
             # Ildkula har gått over toppen
             if self.retning == UPLEFT:
                 self.retning = DOWNLEFT
@@ -81,7 +81,7 @@ class ild:
                 self.retning = DOWNRIGHT
             elif self.retning == UP:
                 self.retning = DOWN
-        if self.rect.bottom > vinduy + 50:
+        if self.rect.bottom > vinduy + 100:
             # Ildkula har gått under bunnen
             if self.retning == DOWNLEFT:
                 self.retning = UPLEFT
@@ -89,7 +89,7 @@ class ild:
                 self.retning = UPRIGHT
             elif self.retning == DOWN:
                 self.retning = UP
-        if self.rect.left < -50:
+        if self.rect.left < -100:
             # Ildkula har gått over venstre siden
             if self.retning == DOWNLEFT:
                 self.retning = DOWNRIGHT
@@ -97,7 +97,7 @@ class ild:
                 self.retning = UPRIGHT
             elif self.retning == LEFT:
                 self.retning = RIGHT
-        if self.rect.right > vindux + 50:
+        if self.rect.right > vindux + 100:
             # Ildkula har gått over høyresiden
             if self.retning == DOWNRIGHT:
                 self.retning = DOWNLEFT
@@ -135,7 +135,7 @@ while run:
     # Legger til nye ildkuler etter en viss tid
     gjeldende_tid = pygame.time.get_ticks()
     if gjeldende_tid - sist_pluss >= pluss_intervall:
-        ildkuler.append(ild(random.randint(0, vindux - 50), random.randint(0, vinduy - 50), 50, 50))
+        ildkuler.append(ild(random.randint(0, vindux - 50), vinduy - 50, 50, 50))
         sist_pluss = gjeldende_tid # Oppdaterer siste tid en ildkule ble lagt til
         
     # Fjerner bakgrunnen        
