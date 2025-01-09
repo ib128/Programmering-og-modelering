@@ -5,6 +5,12 @@ import random
 vindux = 800 #576
 vinduy = 600 #324
 
+# Spill variabler
+meny = True
+alive = False
+run = True
+slutt_tid = 0
+
 # Ildkulefarten 
 MOVESPEED = 7
 
@@ -31,7 +37,7 @@ bg3 = pygame.image.load("BG/Clouds1/3.png")
 bg4 = pygame.image.load("BG/Clouds1/4.png")
 
 #Game over bakgrunnsbilde
-gameover_bg = pygame.image.load("Gameover_bg.png")
+gameover_bg = pygame.image.load("BG/Gameover_bg.png")
 
 # Tilpasser bakrunnen til vinduet
 t_bg1 = pygame.transform.scale(bg1, (vindux, vinduy))
@@ -39,6 +45,18 @@ t_bg2 = pygame.transform.scale(bg2, (vindux, vinduy))
 t_bg3 = pygame.transform.scale(bg3, (vindux, vinduy))
 t_bg4 = pygame.transform.scale(bg4, (vindux, vinduy))
 gameover_bg = pygame.transform.scale(gameover_bg, (vindux, vinduy))
+
+def timer():
+    if spiller.is_dead:
+        text = "Tid: " + str(final_tid) + "s"
+    else:
+        elapsed_time = (pygame.time.get_ticks() - start_tid) // 1000
+        font = pygame.font.Font("PressStart2P.ttf", 30)
+        text = "Tid: " + str(elapsed_time) + "s"
+    
+    font = pygame.font.Font("PressStart2P.ttf", 30)
+    Timer = font.render(text, True, (225, 255, 225))
+    overflate.blit(Timer, (10, 10))
 
 
 # Definerer spillerklassen
@@ -241,16 +259,13 @@ spiller = player(300, 300, 50, 50)
 ildkuler = [ild(vindux, vinduy, 60, 60, spiller) for _ in range(5)]
 
 # Tid for å legge til nye ildkuler
-pluss_intervall = 5000 # 3000 ms/3 s
+pluss_intervall = 5000 # 5000 ms/3 s
 sist_pluss = pygame.time.get_ticks()
 
 # Hovedspill løkke
 clock = pygame.time.Clock()
 # Setter FPS (frames per second)
 clock.tick(60)
-meny = True
-alive = False
-run = True
 while run:
     if meny:
         # Tegner bakgrunnene
@@ -265,7 +280,7 @@ while run:
         
         tekst1 = font1.render("Fireball", True, (255, 255, 255))
         skygge1 = skygge1F.render("Fireball", True, (255, 69, 0))
-        tekst2 = font2.render("Trykk 'R' for å starte spillet", True, (255, 255, 255))
+        tekst2 = font2.render("Trykk 'R' for å starte spillet", True, (255, 69, 0))
         
         # Sentral plassering
         tekst1_x = vindux // 2 - tekst1.get_width() // 2
@@ -292,6 +307,7 @@ while run:
         if e.type == pygame.KEYDOWN and e.key == pygame.K_r:
             alive = True
             meny = False
+            start_tid = pygame.time.get_ticks()
     
     if alive:
         # Oppdaterer ildkulene
@@ -302,6 +318,7 @@ while run:
             if spiller.kollisjon_rect.colliderect(ildkule.kollisjon_rect):
                 spiller.is_dead = True
                 alive = False
+                final_tid = (pygame.time.get_ticks() - start_tid) // 1000 # Lagrer sluttid
         
         # Legger til nye ildkuler etter en viss tid
         gjeldende_tid = pygame.time.get_ticks()
@@ -321,6 +338,9 @@ while run:
         overflate.blit(t_bg2, (0, 0))
         overflate.blit(t_bg3, (0, 0))
         overflate.blit(t_bg4, (0, 0))
+        
+        # Lager timer
+        timer()
         
         # Tegner spilleren
         spiller.tegn()
@@ -350,6 +370,7 @@ while run:
             tekst2 = font2.render("Trykk 'R' for å prøve igjen", True, (255, 255, 255))
             overflate.blit(tekst1, (vindux // 2 - tekst1.get_width() // 2, vinduy // 2 - tekst1.get_height() // 2))
             overflate.blit(tekst2, (vindux // 2 - tekst2.get_width() // 2, (vinduy // 2 - tekst2.get_height() // 2) + 100))
+            timer() # printer slutt-tid
             pygame.display.update()
             
             # Venter på spill-avslutning eller restart
