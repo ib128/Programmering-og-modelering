@@ -210,7 +210,7 @@ class ild:
         elif self.retning == DOWN:
             self.rect.top += MOVESPEED
         
-        #Oppdaterer kollisjonsbpoksen etter bevegelse
+        #Oppdaterer kollisjonsboksen etter bevegelse
         self.kollisjon_rect.topleft = (self.rect.x + 15, self.rect.y + 15)
             
     def check_bounds(self, width, height):
@@ -259,7 +259,7 @@ spiller = player(300, 300, 50, 50)
 ildkuler = [ild(vindux, vinduy, 60, 60, spiller) for _ in range(5)]
 
 # Tid for å legge til nye ildkuler
-pluss_intervall = 5000 # 5000 ms/3 s
+pluss_intervall = 5000 # 5000 ms/5 s
 sist_pluss = pygame.time.get_ticks()
 
 # Hovedspill løkke
